@@ -190,7 +190,7 @@ public class MatchBManager : MonoBehaviour {
             {
                 //換失敗場景
                 GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Fail);
-                Debug.Log("物件數量錯誤");
+                Debug.Log("物件數量錯誤"+ m_MatchPosItemControl[i].OnCollidionrObjCount());
                 return;
             }
             //判斷所有感應區物件名稱是否正確
