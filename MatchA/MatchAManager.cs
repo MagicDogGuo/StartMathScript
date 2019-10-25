@@ -23,7 +23,6 @@ public class MatchAManager : MonoBehaviour {
     MatchPosItem_matchA[] m_MatchPosItems;
     SceneSound_matchA m_SceneSound;
     OtherAnimObj_matchA m_otherAnimObj;
-    bool m_isCloseBackToOriPos;
 
     GameObject m_OtherAnimObjs = null;
 
@@ -38,7 +37,6 @@ public class MatchAManager : MonoBehaviour {
         m_MatchPosItems = MatchASourse.MatchPosItems;
         m_SceneSound = MatchASourse.SceneSounds;
         m_otherAnimObj = MatchASourse.OtherAnimObjs;
-        m_isCloseBackToOriPos = MatchASourse.IsCloseBackToOriPos;
 
         //淡出相機
         m_CameraFade = this.gameObject.AddComponent<CameraFade>();
@@ -106,7 +104,6 @@ public class MatchAManager : MonoBehaviour {
             //生成時給予正確後移動到的位置
             MoveItemObj[i].GetComponent<MoveItemControl_matchA>().CorrectPosX = _moveItems[i].MoveItemIsCorrectPosition.x;
             MoveItemObj[i].GetComponent<MoveItemControl_matchA>().CorrectPosY = _moveItems[i].MoveItemIsCorrectPosition.y;
-            MoveItemObj[i].GetComponent<MoveItemControl_matchA>().m_IsCloseBackToOriPos = m_isCloseBackToOriPos;
         }
     }
 

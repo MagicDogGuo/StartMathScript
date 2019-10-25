@@ -8,7 +8,7 @@ using UnityEngine;
 public class MatchDSourse : MonoBehaviour
 {
     public SceneSound_matchD SceneSounds;
-    public MoveItem_matchD[] MoveItems;
+    public Moveitem_matchD[] MoveItems;
     public MatchPosItem_matchD[] MatchPosItems;
     public OtherAnimObj_matchD OtherAnimObjs;
 }
@@ -26,20 +26,24 @@ public class SceneSound_matchD
 }
 
 [System.Serializable]
-public class MoveItem_matchD
+public class Moveitem_matchD
 {
-    [Header("拖曳物件的圖片/位置/正確之後自動吸附的位置(相對感應區)")]
-    [EditorName("拖曳物件的圖片")]
+    //[header("拖曳物件的圖片/位置/正確之後自動吸附的位置(相對感應區)")]
+    //[editorname("物件圖片,該物件會自動吸附在")]
     public Sprite MoveItemSprite;
-    //[EditorName("拖曳物件的位置")]
-    //public Vector2 MoveItemPosition = Vector2.zero;
-    [EditorName("正確之後自動吸附的位置(相對感應區)")]
-    public Vector2 MoveItemIsCorrectPosition;
+    ////[editorname("拖曳物件的位置")]
+    ////public vector2 moveitemposition = vector2.zero;
+    //[editorname("正確之後自動吸附的位置(相對感應區)")]
+    //public vector2 moveitemiscorrectposition;
 }
 
 [System.Serializable]
 public class MatchPosItem_matchD
 {
+    [Header("拖拉用的物件的圖片")]
+    [EditorName("拖拉物件的圖片")]
+    public Sprite MoveItemSprite;
+
     [Header("感應區的圖片/位置")]
     [EditorName("感應區的圖片")]
     public Sprite MatchPosItemSprite;
@@ -52,6 +56,14 @@ public class MatchPosItem_matchD
     public GameObject CorrectObj;
     [EditorName("產生位置(相對母物件-感應區)")]
     public Vector2 CorrectObjPos;
+    [EditorName("是否在遊戲中顯示感應區圖片")]
+    public bool ShowMatchPosSpriteInGame;
+
+    [Tooltip("感應區的範圍長寬比倍數縮放\n避免感應區相鄰造成Bug")]
+    [EditorName("感應區的範圍比例設定")]
+    public Vector2 BoxColliderSizeScale = Vector2.one;
+
+
     //[EditorName("感應區id")]
     //public int MatchPosItemInitId;
 }

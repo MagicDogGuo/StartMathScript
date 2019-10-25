@@ -38,6 +38,8 @@ namespace UnkaEditor.Utitlites
                     }
                     else
                     {
+
+
                         if (fields[a].FieldType == typeof(Sprite))
                         {
                             EditorGUILayout.Separator();

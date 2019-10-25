@@ -20,7 +20,7 @@ public class MoveItemControl_matchD : MonoBehaviour {
     /// <summary>
     /// 暫存用的ColliderObj
     /// </summary>
-    GameObject m_TempColliderObj;
+    List<GameObject> mTempColliderObjList;
 
     public float CorrectPosX;
     public float CorrectPosY;
@@ -41,13 +41,15 @@ public class MoveItemControl_matchD : MonoBehaviour {
         BCollider.isTrigger = true;
         Vector2 OriColliderSize = BCollider.size;
         BCollider.size = OriColliderSize * 0.8f;
-
+        mTempColliderObjList = new List<GameObject>();
     }
 
     #region OnMouse
     private void OnMouseDown()
     {
-        if (m_ColliderObj != null) m_TempColliderObj = m_ColliderObj;
+        //if (m_ColliderObj != null) m_TempColliderObj = m_ColliderObj;
+        if (m_ColliderObj != null)
+            mTempColliderObjList.Add(m_ColliderObj);
 
         m_DragStartPos = transform.position;
         m_offsetToMouse = m_DragStartPos - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, transform.position.z));
@@ -63,76 +65,147 @@ public class MoveItemControl_matchD : MonoBehaviour {
 
     private void OnMouseUp()
     {
+        //      m_DragEndPos = transform.position;
+
+        //      var colliderCenter = GetComponent<Collider2D>().bounds.center;
+        //      var posX = Camera.main.WorldToScreenPoint(colliderCenter).x;
+        //      var posY = Camera.main.WorldToScreenPoint(colliderCenter).y;   
+
+        //      float moveDis = Vector3.Distance(m_DragStartPos, m_DragEndPos);
+
+        //      SetLog(this.name + " OnMouseUp, m_TempColliderObj == null : " + (m_TempColliderObj == null) + ((m_TempColliderObj == null) ? "" : ", name : " + m_TempColliderObj.name)
+        //          + "\n" + "m_colliderObj == null : " + (m_ColliderObj == null) + ((m_ColliderObj == null) ? "" : ", name : " + m_ColliderObj.name), LogType.Log);
+
+        //      if (m_TempColliderObj != null && m_TempColliderObj.tag == "matchPosItem")
+        //      {
+        //          SetPosAndParent(m_TempColliderObj);
+
+        //          if (m_TempColliderObj.transform.childCount > 2)
+        //          {
+        //              SetLog("====Child Cound > 2", LogType.Error);
+        //          }
+
+        //          //檢查到超過兩個的話
+        //          if (m_TempColliderObj.transform.childCount > 1)
+        //          {
+
+        //              MoveItemControl_matchD prev_item = m_TempColliderObj.transform.GetChild(0).GetComponent<MoveItemControl_matchD>();
+
+        //              if (prev_item != null)
+        //              {
+        //                  if(m_ColliderObj != null)
+        //                  {
+        //                      //回到指定的碰撞區域
+        //                      SetLog("A, m_ColliderObj: " + m_ColliderObj.name + " , m_tempColldier.name:" + m_TempColliderObj.name, LogType.Log);
+        //                      prev_item.transform.SetParent(m_ColliderObj.transform);
+        //                      prev_item.transform.position = m_ColliderObj.transform.position;
+        //                      prev_item.m_ColliderObj = m_ColliderObj;
+        //                      prev_item.m_TempColliderObj = null;
+        //                      SetLog("A,2, prevTempCollider : " + (prev_item.m_TempColliderObj == null ? "null" : prev_item.m_TempColliderObj.name) + " , prevCollider.name:" + (prev_item.m_ColliderObj == null ? "null" : prev_item.m_ColliderObj.name), LogType.Log);
+        //                  }
+        //                  else
+        //                  {
+        //                      //回到MoveArea
+        //                      SetLog("B, m_ColliderObj: " + (m_ColliderObj == null ? "null" : m_ColliderObj.name) + " , m_tempColldier.name:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name), LogType.Log);
+        //                      prev_item.transform.SetParent(moveArea.transform);
+        //                      prev_item.transform.position = prev_item.m_OriginalPos;
+        //                      prev_item.m_ColliderObj = null;
+        //                      prev_item.m_TempColliderObj = null;
+        //                      SetLog("B,2, prevTempCollider : " + (prev_item.m_TempColliderObj == null ? "null" : prev_item.m_TempColliderObj.name) + " , prevCollider.name:" + (prev_item.m_ColliderObj == null ? "null" : prev_item.m_ColliderObj.name), LogType.Log);
+        //                  }
+        //              }
+        //          }
+
+        //          //m_ColliderObj = m_TempColliderObj;
+        //          //m_TempColliderObj = null;
+
+        //      }
+        //      else if (m_ColliderObj != null)
+        //      {
+        //          SetPosAndParent(m_ColliderObj);
+        //      }
+        //      else if (m_TempColliderObj == null)
+        //      {
+        //          this.transform.position = m_OriginalPos;
+        //      }
+
+        //      m_ColliderObj = m_TempColliderObj;
+        //      m_TempColliderObj = null;
+        //      mIsDragMode = false;
+
+        //      SetLog(this.name + " ===OnMouseUp finished==== "
+        //+ "\n" + "tempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; m_ColliderObj.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Log);
+
         m_DragEndPos = transform.position;
-        
+
         var colliderCenter = GetComponent<Collider2D>().bounds.center;
         var posX = Camera.main.WorldToScreenPoint(colliderCenter).x;
-        var posY = Camera.main.WorldToScreenPoint(colliderCenter).y;   
+        var posY = Camera.main.WorldToScreenPoint(colliderCenter).y;
 
         float moveDis = Vector3.Distance(m_DragStartPos, m_DragEndPos);
 
-        SetLog(this.name + " OnMouseUp, m_TempColliderObj == null : " + (m_TempColliderObj == null) + ((m_TempColliderObj == null) ? "" : ", name : " + m_TempColliderObj.name)
-            + "\n" + "m_colliderObj == null : " + (m_ColliderObj == null) + ((m_ColliderObj == null) ? "" : ", name : " + m_ColliderObj.name), LogType.Log);
+        //SetLog(this.name + " OnMouseUp, m_TempColliderObj == null : " + (m_TempColliderObj == null) + ((m_TempColliderObj == null) ? "" : ", name : " + m_TempColliderObj.name)
+        //    + "\n" + "m_colliderObj == null : " + (m_ColliderObj == null) + ((m_ColliderObj == null) ? "" : ", name : " + m_ColliderObj.name), LogType.Log);
 
-        if (m_TempColliderObj != null && m_TempColliderObj.tag == "matchPosItem")
+        if(mTempColliderObjList.Count > 0)
         {
-            SetPosAndParent(m_TempColliderObj);
+            GameObject tempColliderObj = mTempColliderObjList[mTempColliderObjList.Count - 1];
+            SetPosAndParent(tempColliderObj);
 
-            if (m_TempColliderObj.transform.childCount > 2)
+            if (tempColliderObj.transform.childCount > 2)
             {
                 SetLog("====Child Cound > 2", LogType.Error);
             }
 
             //檢查到超過兩個的話
-            if (m_TempColliderObj.transform.childCount > 1)
+            if (tempColliderObj.transform.childCount > 1)
             {
-           
-                MoveItemControl_matchD prev_item = m_TempColliderObj.transform.GetChild(0).GetComponent<MoveItemControl_matchD>();
-                
+
+                MoveItemControl_matchD prev_item = tempColliderObj.transform.GetChild(0).GetComponent<MoveItemControl_matchD>();
+
                 if (prev_item != null)
                 {
-                    if(m_ColliderObj != null)
+                    if (m_ColliderObj != null)
                     {
                         //回到指定的碰撞區域
-                        SetLog("A, m_ColliderObj: " + m_ColliderObj.name + " , m_tempColldier.name:" + m_TempColliderObj.name, LogType.Log);
+                        SetLog("A, m_ColliderObj: " + m_ColliderObj.name + " , m_tempColldier.name:" + tempColliderObj.name, LogType.Log);
                         prev_item.transform.SetParent(m_ColliderObj.transform);
                         prev_item.transform.position = m_ColliderObj.transform.position;
                         prev_item.m_ColliderObj = m_ColliderObj;
-                        prev_item.m_TempColliderObj = null;
-                        SetLog("A,2, prevTempCollider : " + (prev_item.m_TempColliderObj == null ? "null" : prev_item.m_TempColliderObj.name) + " , prevCollider.name:" + (prev_item.m_ColliderObj == null ? "null" : prev_item.m_ColliderObj.name), LogType.Log);
+                        prev_item.mTempColliderObjList.Clear();
+                        SetLog("A,2, prevTempCollider : " + (prev_item.mTempColliderObjList.Count)  + " , prevCollider.name:" + (prev_item.m_ColliderObj == null ? "null" : prev_item.m_ColliderObj.name), LogType.Log);
                     }
                     else
                     {
                         //回到MoveArea
-                        SetLog("B, m_ColliderObj: " + (m_ColliderObj == null ? "null" : m_ColliderObj.name) + " , m_tempColldier.name:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name), LogType.Log);
+                        SetLog("B, m_ColliderObj: " + (m_ColliderObj == null ? "null" : m_ColliderObj.name) + " , m_tempColldier.name:" + (tempColliderObj == null ? "null" : tempColliderObj.name), LogType.Log);
                         prev_item.transform.SetParent(moveArea.transform);
                         prev_item.transform.position = prev_item.m_OriginalPos;
                         prev_item.m_ColliderObj = null;
-                        prev_item.m_TempColliderObj = null;
-                        SetLog("B,2, prevTempCollider : " + (prev_item.m_TempColliderObj == null ? "null" : prev_item.m_TempColliderObj.name) + " , prevCollider.name:" + (prev_item.m_ColliderObj == null ? "null" : prev_item.m_ColliderObj.name), LogType.Log);
+                        prev_item.mTempColliderObjList.Clear();
+                        SetLog("B,2, prevTempCollider count : " + (prev_item.mTempColliderObjList.Count) + " , prevCollider.name:" + (prev_item.m_ColliderObj == null ? "null" : prev_item.m_ColliderObj.name), LogType.Log);
                     }
                 }
             }
 
             //m_ColliderObj = m_TempColliderObj;
             //m_TempColliderObj = null;
-      
         }
         else if (m_ColliderObj != null)
         {
             SetPosAndParent(m_ColliderObj);
         }
-        else if (m_TempColliderObj == null)
+        else if (mTempColliderObjList.Count == 0)
         {
             this.transform.position = m_OriginalPos;
         }
 
-        m_ColliderObj = m_TempColliderObj;
-        m_TempColliderObj = null;
+        //m_ColliderObj = m_TempColliderObj;
+        mTempColliderObjList.Clear();
         mIsDragMode = false;
 
-        SetLog(this.name + " ===OnMouseUp finished==== "
-  + "\n" + "tempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; m_ColliderObj.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Log);
+  //      SetLog(this.name + " ===OnMouseUp finished==== "
+  //+ "\n" + "tempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; m_ColliderObj.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Log);
     }
 
     #endregion OnMouse
@@ -161,16 +234,26 @@ public class MoveItemControl_matchD : MonoBehaviour {
         if (collision.tag == "matchPosItem")
         {
             //temp collider的話判斷是否為拖拉狀態在進行設定
-            m_TempColliderObj = mIsDragMode ? collision.gameObject : null;
+            if (mIsDragMode)
+            {
+                mTempColliderObjList.Add(collision.gameObject);
+            }
+            else
+            {
+                mTempColliderObjList.Remove(collision.gameObject);
+            }
+            
             if(!mIsDragMode)
             {
                 m_ColliderObj = collision.gameObject;
                 SetPosAndParent(m_ColliderObj);
             }
 
-            SetLog(this.name + " ===trigger Enter==== " + collision.name
-            + "\n" + "TempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; Collider.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Warning);
+            //SetLog(this.name + " ===trigger Enter==== " + collision.name
+            //+ "\n" + "TempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; Collider.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Warning);
         }
+
+        //Debug.Log("OnTrigger2D, Item: " + collision.name + ", tag: " + collision.tag);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -178,13 +261,21 @@ public class MoveItemControl_matchD : MonoBehaviour {
         if (collision.tag == "moveItem")
             return;
 
-        if (collision.tag == "matchPosItem")
+        //if (collision.tag == "matchPosItem" && m_TempColliderObj != null && m_TempColliderObj == collision.gameObject)
+        //{
+        //    m_TempColliderObj = null;
+        //    if (!mIsDragMode) m_ColliderObj = null;
+
+        //    SetLog(this.name + " ===OnTriggerExit2D==== " + collision.name
+        //+ "\n" + "TempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; Collider.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Log);
+        //}
+        if (collision.tag == "matchPosItem" )
         {
-            m_TempColliderObj = null;
+            mTempColliderObjList.Remove(collision.gameObject);
             if (!mIsDragMode) m_ColliderObj = null;
 
-            SetLog(this.name + " ===OnTriggerExit2D==== " + collision.name
-        + "\n" + "TempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; Collider.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Log);
+        //    SetLog(this.name + " ===OnTriggerExit2D==== " + collision.name
+        //+ "\n" + "TempColliderName:" + (m_TempColliderObj == null ? "null" : m_TempColliderObj.name) + " ; Collider.Name:" + (m_ColliderObj == null ? "null" : m_ColliderObj.name), LogType.Log);
         }
 
     }

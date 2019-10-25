@@ -18,13 +18,19 @@ public class MatchPosItemControl_matchD : MonoBehaviour {
     [HideInInspector]
     public Vector2 CorrectObjPos;
 
+    [Tooltip("BoxCollider碰撞區域縮放比例")]
+    /// <summary>
+    /// BoxCollider縮放比例
+    /// </summary>
+    public Vector2 BoxColliderScale;
+
 
     private void Start()
     {
         //產生trigger
         BoxCollider2D BCollider = this.gameObject.AddComponent<BoxCollider2D>();
         BCollider.isTrigger = true;
-
+        BCollider.size = new Vector2(BCollider.size.x * BoxColliderScale.x, BCollider.size.y * BoxColliderScale.y);
     }
 
     /// <summary>

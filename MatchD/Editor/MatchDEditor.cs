@@ -98,15 +98,15 @@ public class MatchDEditor : Editor {
         GUILayout.Space(20f);
 
 
-        moveItemsFoldout = EditorGUILayout.Foldout(moveItemsFoldout, "拖曳物件的圖片 / 位置");
-        if (moveItemsFoldout)
-        {
+        //moveItemsFoldout = EditorGUILayout.Foldout(moveItemsFoldout, "拖曳物件的圖片 / 位置");
+        //if (moveItemsFoldout)
+        //{
 
-            UEditorGUI.ArrayEditor(serializedObject.FindProperty("MoveItems"), typeof(MoveItem_matchD), MoveItem_ArrayEditorMiddle, MoveItem_ArrayEditorTrail);
+        //    UEditorGUI.ArrayEditor(serializedObject.FindProperty("MoveItems"), typeof(MoveItem_matchD), MoveItem_ArrayEditorMiddle, MoveItem_ArrayEditorTrail);
         
-        }
+        //}
 
-        matchPosFoldout = EditorGUILayout.Foldout(matchPosFoldout, "感應區圖片、正確物件資訊");
+        matchPosFoldout = EditorGUILayout.Foldout(matchPosFoldout, "拖拉物件圖片、感應區圖片、正確物件資訊");
         if (matchPosFoldout)
         {
             UEditorGUI.ArrayEditor(serializedObject.FindProperty("MatchPosItems"), typeof(MatchPosItem_matchD), MatchItemPost_ArrayEditorMiddle, MatchItemPost_ArrayEditorTrail);
@@ -196,6 +196,10 @@ public class MatchDEditor : Editor {
     protected void MatchItemPost_ArrayEditorTrail(int index)
     {
         GUILayout.BeginVertical();
+        var t0 = EditorGUILayout.GetControlRect(GUILayout.Width(90), GUILayout.Height(60));
+        Instance.MatchPosItems[index].MoveItemSprite = (Sprite)EditorGUI.ObjectField(t0, Instance.MatchPosItems[index].MoveItemSprite, typeof(Sprite), false);
+
+       // GUILayout.BeginVertical();
         var te = EditorGUILayout.GetControlRect(GUILayout.Width(90), GUILayout.Height(60));
         Instance.MatchPosItems[index].MatchPosItemSprite = (Sprite)EditorGUI.ObjectField(te, Instance.MatchPosItems[index].MatchPosItemSprite, typeof(Sprite), false);
 

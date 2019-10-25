@@ -17,15 +17,15 @@ public class MatchDManager : MonoBehaviour {
     [Header("配對物件prefab")]
     GameObject matchPosItemObj;
 
-    public enum Mode
-    {
-        拖曳物件初始都設在所有感應區,
-        拖曳物件初始設在無正確答案圖片的感應區,
-    }
+    //public enum Mode
+    //{
+    //    拖曳物件初始都設在所有感應區,
+    //    拖曳物件初始設在無正確答案圖片的感應區,
+    //}
 
-    [SerializeField]
-    [Header("配對物件prefab")]
-    public Mode GameMode;
+    //[SerializeField]
+    //[Header("配對物件prefab")]
+    //public Mode GameMode;
 
     //生成的物件
     /// <summary>
@@ -39,7 +39,7 @@ public class MatchDManager : MonoBehaviour {
 
     MatchDSourse MatchDSourse;
 
-    MoveItem_matchD[] m_MoveItems;
+    Moveitem_matchD[] m_MoveItems;
     MatchPosItem_matchD[] m_MatchPosItems;
     SceneSound_matchD m_SceneSound;
     OtherAnimObj_matchD m_otherAnimObj;
@@ -53,7 +53,7 @@ public class MatchDManager : MonoBehaviour {
     void Start () {
         //連接MatchASourse
         MatchDSourse = GetComponent<MatchDSourse>();
-        m_MoveItems = MatchDSourse.MoveItems;
+        //m_MoveItems = MatchDSourse.MoveItems;
         m_MatchPosItems = MatchDSourse.MatchPosItems;
         m_SceneSound = MatchDSourse.SceneSounds;
         m_otherAnimObj = MatchDSourse.OtherAnimObjs;
@@ -67,9 +67,11 @@ public class MatchDManager : MonoBehaviour {
         //判斷播放開頭提示音效
         PlaySceneSound(m_SceneSound.TipSound, m_SceneSound.TipSoundOnOff);
 
+        //Debug.Log("moveItem count : "  + m_MatchPosItems.Length);
         //生成場景物件
-        InstanceMatchPosItem(m_MatchPosItems, matchPosItemObj);
-        InstanceMoveItem(m_MoveItems, moveItmeObj);
+        
+        InstanceMatchPosItem(m_MatchPosItems, matchPosItemObj , moveItmeObj);
+        //InstanceMoveItem(m_MoveItems, moveItmeObj);
 
         InstanceOtherAnimObj(m_otherAnimObj);
 
@@ -115,111 +117,123 @@ public class MatchDManager : MonoBehaviour {
     /// (editor)生成移動物件
     /// </summary>
     /// <param name="_moveItems"></param>
-    public void InstanceMoveItem(MoveItem_matchD[] _moveItems, GameObject objPrefab)
+    public void InstanceMoveItem(Sprite movementSprite, GameObject objPrefab , Transform parentTransform)
     {
-        switch(GameMode)
-        {
-            case Mode.拖曳物件初始都設在所有感應區:
-
-                //確認是否數量不一致
-                if (_moveItems.Length != MatchPosItemObj.Count)
-                {
-                    Debug.LogError("模式 : 拖曳物件初始都設在所有感應區 , 容器數量:" + MatchPosItemObj.Count + ",拖拉物件數量:" + _moveItems.Length + " , 兩者不一致!");
-                }
-                for (int i = 0; i < _moveItems.Length; i++)
-                {
-                    MoveItemObj.Add(Instantiate(objPrefab, this.transform));
-                    MoveItemObj[i].GetComponent<SpriteRenderer>().sprite = _moveItems[i].MoveItemSprite;
-                    //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
-                    //生成時給予正確後移動到的位置
-                    MoveItemObj[i].GetComponent<MoveItemControl_matchD>().CorrectPosX = _moveItems[i].MoveItemIsCorrectPosition.x;
-                    MoveItemObj[i].GetComponent<MoveItemControl_matchD>().CorrectPosY = _moveItems[i].MoveItemIsCorrectPosition.y;
-                    MoveItemObj[i].gameObject.name = MoveItemObj[i].gameObject.name + "_" + (i + 1);
+        MoveItemObj.Add(Instantiate(objPrefab, parentTransform));
+        MoveItemObj[MoveItemObj.Count-1].GetComponent<SpriteRenderer>().sprite = movementSprite;
+        //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
+        //生成時給予正確後移動到的位置
+        MoveItemObj[MoveItemObj.Count - 1].GetComponent<MoveItemControl_matchD>().CorrectPosX = 0;
+        MoveItemObj[MoveItemObj.Count - 1].GetComponent<MoveItemControl_matchD>().CorrectPosY = 0;
+        MoveItemObj[MoveItemObj.Count - 1].gameObject.name = parentTransform.name + "_movement_item_" + MoveItemObj.Count;
 
 
-                    //設定位置給Parent
-                    MoveItemObj[i].transform.position = MatchPosItemObj[i].transform.position;
+        //設定位置給Parent
 
-                }
+        //switch(GameMode)
+        //{
+        //    case Mode.拖曳物件初始都設在所有感應區:
 
-                break;
-
-            case Mode.拖曳物件初始設在無正確答案圖片的感應區:
-
-                int idx1 = 0;
-                int idx2 = 0;
-
-                for ( ; idx1 < MatchPosItemObj.Count; idx1++)
-                {
-                    string name = MatchPosItemObj[idx1].GetComponent<MatchPosItemControl_matchD>().CorrectColliderObjName;
-                    Debug.Log("name: " + MatchPosItemObj[idx1].name + " , " + name + ", length: "+ name.Length);
-                    if (name.Length == 0)
-                    {
-                        MoveItemObj.Add(Instantiate(objPrefab, this.transform));
-                        MoveItemObj[idx2].GetComponent<SpriteRenderer>().sprite = _moveItems[idx2].MoveItemSprite;
-                        //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
-                        //生成時給予正確後移動到的位置
-                        MoveItemObj[idx2].GetComponent<MoveItemControl_matchD>().CorrectPosX = _moveItems[idx2].MoveItemIsCorrectPosition.x;
-                        MoveItemObj[idx2].GetComponent<MoveItemControl_matchD>().CorrectPosY = _moveItems[idx2].MoveItemIsCorrectPosition.y;
-                        MoveItemObj[idx2].gameObject.name = MatchPosItemObj[idx2].gameObject.name + "_" + (idx2 + 1);
-
-                        //設定位置給Parent
-                        MoveItemObj[idx2].transform.position = MatchPosItemObj[idx1].transform.position;
-                        idx2++;
-                    }
-
-                    //for (int idx2 = 0; idx2 < _moveItems.Length; idx2++)
-                    //{
-                    //    if (MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().CorrectColliderObjName.Length > 0)
-                    //    {
-
-                    //    }
-                    //}
-                }
-
-                if(MoveItemObj.Count != _moveItems.Length)
-                {
-                    Debug.LogError("模式: 拖曳物件初始都設在所有感應區, ! 可供拖拉的道具生成數量非預期! 預期: " + _moveItems.Length + " , 實際: " + MoveItemObj.Count);
-                }
-
-                //    for (int idx1 = 0; idx1 < _moveItems.Length; idx1++)
-                //{
-                //    for(int idx2 = 0; idx2 < MatchPosItemObj.Count; idx2++)
-                //    {
-                //        if(MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().CorrectColliderObjName.Length > 0)
-                //        {
-
-                //        }
-                //    }
-                //    MoveItemObj.Add(Instantiate(objPrefab, this.transform));
-                //    MoveItemObj[idx1].GetComponent<SpriteRenderer>().sprite = _moveItems[idx1].MoveItemSprite;
-                //    //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
-                //    //生成時給予正確後移動到的位置
-                //    MoveItemObj[idx1].GetComponent<MoveItemControl_matchD>().CorrectPosX = _moveItems[idx1].MoveItemIsCorrectPosition.x;
-                //    MoveItemObj[idx1].GetComponent<MoveItemControl_matchD>().CorrectPosY = _moveItems[idx1].MoveItemIsCorrectPosition.y;
-                //    MoveItemObj[idx1].gameObject.name = MoveItemObj[idx1].gameObject.name + "_" + (idx1 + 1);
+        //        //確認是否數量不一致
+        //        if (_moveItems.Length != MatchPosItemObj.Count)
+        //        {
+        //            Debug.LogError("模式 : 拖曳物件初始都設在所有感應區 , 容器數量:" + MatchPosItemObj.Count + ",拖拉物件數量:" + _moveItems.Length + " , 兩者不一致!");
+        //        }
+        //        for (int i = 0; i < _moveItems.Length; i++)
+        //        {
+        //            MoveItemObj.Add(Instantiate(objPrefab, this.transform));
+        //            MoveItemObj[i].GetComponent<SpriteRenderer>().sprite = _moveItems[i].MoveItemSprite;
+        //            //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
+        //            //生成時給予正確後移動到的位置
+        //            MoveItemObj[i].GetComponent<MoveItemControl_matchD>().CorrectPosX = 0;
+        //            MoveItemObj[i].GetComponent<MoveItemControl_matchD>().CorrectPosY = 0;
+        //            MoveItemObj[i].gameObject.name = MoveItemObj[i].gameObject.name + "_" + (i + 1);
 
 
-                //    //設定parent的位置
-                //    MoveItemObj[idx1].transform.position = MatchPosItemObj[idx1].transform.position;
+        //            //設定位置給Parent
+        //            MoveItemObj[i].transform.position = MatchPosItemObj[i].transform.position;
 
-                //}
+        //        }
 
-                break;
-        }
-        
+        //        break;
+
+        //    case Mode.拖曳物件初始設在無正確答案圖片的感應區:
+
+        //        int idx1 = 0;
+        //        int idx2 = 0;
+
+        //        for ( ; idx1 < MatchPosItemObj.Count; idx1++)
+        //        {
+        //            string name = MatchPosItemObj[idx1].GetComponent<MatchPosItemControl_matchD>().CorrectColliderObjName;
+        //            Debug.Log("name: " + MatchPosItemObj[idx1].name + " , " + name + ", length: "+ name.Length);
+        //            if (name.Length == 0)
+        //            {
+        //                MoveItemObj.Add(Instantiate(objPrefab, this.transform));
+        //                MoveItemObj[idx2].GetComponent<SpriteRenderer>().sprite = _moveItems[idx2].MoveItemSprite;
+        //                //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
+        //                //生成時給予正確後移動到的位置
+        //                MoveItemObj[idx2].GetComponent<MoveItemControl_matchD>().CorrectPosX = 0;
+        //                MoveItemObj[idx2].GetComponent<MoveItemControl_matchD>().CorrectPosY = 0;
+        //                MoveItemObj[idx2].gameObject.name = MatchPosItemObj[idx2].gameObject.name + "_" + (idx2 + 1);
+
+        //                //設定位置給Parent
+        //                MoveItemObj[idx2].transform.position = MatchPosItemObj[idx1].transform.position;
+        //                idx2++;
+        //            }
+
+        //            //for (int idx2 = 0; idx2 < _moveItems.Length; idx2++)
+        //            //{
+        //            //    if (MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().CorrectColliderObjName.Length > 0)
+        //            //    {
+
+        //            //    }
+        //            //}
+        //        }
+
+        //        if(MoveItemObj.Count != _moveItems.Length)
+        //        {
+        //            Debug.LogError("模式: 拖曳物件初始都設在所有感應區, ! 可供拖拉的道具生成數量非預期! 預期: " + _moveItems.Length + " , 實際: " + MoveItemObj.Count);
+        //        }
+
+        //        //    for (int idx1 = 0; idx1 < _moveItems.Length; idx1++)
+        //        //{
+        //        //    for(int idx2 = 0; idx2 < MatchPosItemObj.Count; idx2++)
+        //        //    {
+        //        //        if(MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().CorrectColliderObjName.Length > 0)
+        //        //        {
+
+        //        //        }
+        //        //    }
+        //        //    MoveItemObj.Add(Instantiate(objPrefab, this.transform));
+        //        //    MoveItemObj[idx1].GetComponent<SpriteRenderer>().sprite = _moveItems[idx1].MoveItemSprite;
+        //        //    //MoveItemObj[i].transform.position = new Vector3(_moveItems[i].MoveItemPosition.x, _moveItems[i].MoveItemPosition.y, -2);
+        //        //    //生成時給予正確後移動到的位置
+        //        //    MoveItemObj[idx1].GetComponent<MoveItemControl_matchD>().CorrectPosX = _moveItems[idx1].MoveItemIsCorrectPosition.x;
+        //        //    MoveItemObj[idx1].GetComponent<MoveItemControl_matchD>().CorrectPosY = _moveItems[idx1].MoveItemIsCorrectPosition.y;
+        //        //    MoveItemObj[idx1].gameObject.name = MoveItemObj[idx1].gameObject.name + "_" + (idx1 + 1);
+
+
+        //        //    //設定parent的位置
+        //        //    MoveItemObj[idx1].transform.position = MatchPosItemObj[idx1].transform.position;
+
+        //        //}
+
+        //        break;
+        //}
+
     }
 
     /// <summary>
-    /// (editor)生成連接位置物件
+    /// (editor)生成連接位置物件 +　拖拉物件圖片
     /// </summary>
     /// <param name="_matchPosItems"></param>
-    public void InstanceMatchPosItem(MatchPosItem_matchD[] _matchPosItems,GameObject objPrefab)
+    public void InstanceMatchPosItem(MatchPosItem_matchD[] _matchPosItems,GameObject objPrefab , GameObject moveItemPrefab)
     {
         for (int i = 0; i < _matchPosItems.Length; i++)
         {
             MatchPosItemObj.Add(Instantiate(objPrefab, this.transform));
             MatchPosItemObj[i].GetComponent<SpriteRenderer>().sprite = _matchPosItems[i].MatchPosItemSprite;
+            MatchPosItemObj[i].GetComponent<SpriteRenderer>().enabled = _matchPosItems[i].ShowMatchPosSpriteInGame;
             MatchPosItemObj[i].transform.position = _matchPosItems[i].MatchPosItemPosition;
             //生成時給予要配對的圖片名稱
             if(_matchPosItems[i].CorrectMoveItemSpriteName != null)
@@ -228,7 +242,16 @@ public class MatchDManager : MonoBehaviour {
             MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().CorrectObj = _matchPosItems[i].CorrectObj;
             //生成時給予正確物件生成位置
             MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().CorrectObjPos = _matchPosItems[i].CorrectObjPos;
+            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchD>().BoxColliderScale = _matchPosItems[i].BoxColliderSizeScale;
             MatchPosItemObj[i].gameObject.name = MatchPosItemObj[i].gameObject.name + "_" + (i + 1);
+
+            MatchPosItem_matchD item = _matchPosItems[i];
+            if(item.MoveItemSprite != null)
+            {
+                InstanceMoveItem(item.MoveItemSprite, moveItemPrefab, MatchPosItemObj[i].transform);
+            }
+
+            BoxCollider2D collider2D = MatchPosItemObj[i].GetComponent<BoxCollider2D>();
         }
     }
 
@@ -319,7 +342,7 @@ public class MatchDManager : MonoBehaviour {
                     //把感應區當成母物件
                     if (m_MatchPosItemControl[i].CorrectObj != null) InstanceCorrectObj(m_MatchPosItemControl[i].CorrectObj, m_MatchPosItemControl[i].gameObject, m_MatchPosItemControl[i].CorrectObjPos);
                     //隱藏原本的sprite      
-                    onColliderObjName.GetComponent<SpriteRenderer>().enabled = false;
+                    //onColliderObjName.GetComponent<SpriteRenderer>().enabled = false;
                 }
             }
         }
