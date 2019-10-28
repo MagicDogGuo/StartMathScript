@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveItemControl_matchA : MonoBehaviour {
+
+ 
+
     Vector3 m_OriginalPos;
     Vector3 m_DragStartPos;
     Vector3 m_DragEndPos;
@@ -13,7 +16,7 @@ public class MoveItemControl_matchA : MonoBehaviour {
 
     public float CorrectPosX;
     public float CorrectPosY;
-
+   public bool m_IsCloseBackToOriPos;
 
     void Start()
     {
@@ -52,7 +55,7 @@ public class MoveItemControl_matchA : MonoBehaviour {
         float moveDis = Vector3.Distance(m_DragStartPos, m_DragEndPos);
         if (moveDis < 0.2f)
         {//移動不夠回到原位
-            this.transform.position = m_OriginalPos;
+            if(!m_IsCloseBackToOriPos) this.transform.position = m_OriginalPos;
         }
         else if (posX < 0 || posY < 0 || posY > Screen.height  || posX > Screen.width)
         {

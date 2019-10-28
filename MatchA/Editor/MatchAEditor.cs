@@ -95,6 +95,8 @@ public class MatchAEditor : Editor {
 
 
         moveItemsFoldout = EditorGUILayout.Foldout(moveItemsFoldout, "拖曳物件的圖片 / 位置");
+        Instance.IsCloseBackToOriPos = GUILayout.Toggle(Instance.IsCloseBackToOriPos, new GUIContent("關閉自動回彈功能"));
+
         if (moveItemsFoldout)
         {
 

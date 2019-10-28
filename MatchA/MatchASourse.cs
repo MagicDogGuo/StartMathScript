@@ -8,6 +8,7 @@ public class MatchASourse : MonoBehaviour
     public MoveItem_matchA[] MoveItems;
     public MatchPosItem_matchA[] MatchPosItems;
     public OtherAnimObj_matchA OtherAnimObjs;
+    public bool IsCloseBackToOriPos;
 }
 
 [System.Serializable]
