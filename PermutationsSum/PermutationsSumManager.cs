@@ -163,6 +163,7 @@ public class PermutationsSumManager : MonoBehaviour
             sp.sprite = _removeItemOjb.removeItemObj;
             sp.sortingOrder = _removeItemOjb.layer;
             BoxCollider2D collider =  t.AddComponent<BoxCollider2D>();
+            t.transform.position = _removeItemOjb.removeItemObjPosition;
             collider.isTrigger = true;
 
         }
