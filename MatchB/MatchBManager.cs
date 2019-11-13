@@ -4,7 +4,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(MatchBSourse))]
 [RequireComponent(typeof(CameraFade))]
-public class MatchBManager : MonoBehaviour {
+public class MatchBManager : MonoBehaviour
+{
 
     [SerializeField]
     [Header("移動物件Prefab")]
@@ -27,7 +28,7 @@ public class MatchBManager : MonoBehaviour {
     GameObject m_OtherAnimObjs = null;
 
     //感應區內要有的正確物件數量
-    int m_CorrectObjCount = 0;
+    List<int> m_CorrectObjCount = new List<int>();
 
     AudioSource audioSound;
 
@@ -78,7 +79,7 @@ public class MatchBManager : MonoBehaviour {
 
     private IEnumerator IE_PlaySound(AudioClip audioclip, bool isPlay)
     {
-      
+
         GamePublicAudioControl.Instance.DownSceneMusic();
 
         audioSound = gameObject.AddComponent<AudioSource>();
@@ -121,13 +122,13 @@ public class MatchBManager : MonoBehaviour {
             MatchPosItemObj[i].GetComponent<SpriteRenderer>().enabled = !_matchPosItems[i].IsOnlyCollider;
             MatchPosItemObj[i].transform.position = _matchPosItems[i].MatchPosItemPosition;
 
-            m_CorrectObjCount = _matchPosItems[i].CorrectMoveItems.Length;
+            m_CorrectObjCount.Add(_matchPosItems[i].CorrectMoveItems.Length);
             //宣告感應區陣列數量
-            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectColliderObjName = new string[m_CorrectObjCount];
-            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectObj = new GameObject[m_CorrectObjCount];
-            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectObjPos = new Vector2[m_CorrectObjCount];
+            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectColliderObjName = new string[m_CorrectObjCount[i]];
+            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectObj = new GameObject[m_CorrectObjCount[i]];
+            MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectObjPos = new Vector2[m_CorrectObjCount[i]];
             //設定正確感應區參數
-            for (int n = 0 ; n < m_CorrectObjCount; n++)
+            for (int n = 0; n < m_CorrectObjCount[i]; n++)
             {
                 //生成時給予要配對的圖片名稱
                 MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectColliderObjName[n] = _matchPosItems[i].CorrectMoveItems[n].CorrectMoveItemSpriteName.name;
@@ -135,7 +136,7 @@ public class MatchBManager : MonoBehaviour {
                 MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectObj[n] = _matchPosItems[i].CorrectMoveItems[n].CorrectObj;
                 //生成時給予正確物件生成位置
                 MatchPosItemObj[i].GetComponent<MatchPosItemControl_matchB>().CorrectObjPos[n] = _matchPosItems[i].CorrectMoveItems[n].CorrectObjPos;
-            }           
+            }
         }
     }
 
@@ -186,32 +187,32 @@ public class MatchBManager : MonoBehaviour {
         for (int i = 0; i < m_MatchPosItemControl.Count; i++)
         {
             //判斷所有的感應區內是否都有物件或數量不等於答案
-            if (m_MatchPosItemControl[i].OnCollidionrObjCount() == 0 || m_MatchPosItemControl[i].OnCollidionrObjCount() != m_CorrectObjCount)
+            if (m_MatchPosItemControl[i].OnCollidionrObjCount() == 0 || m_MatchPosItemControl[i].OnCollidionrObjCount() != m_CorrectObjCount[i])
             {
                 //換失敗場景
                 GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Fail);
-                Debug.Log("物件數量錯誤");
+                Debug.Log("物件數量錯誤" + m_MatchPosItemControl[i].OnCollidionrObjCount());
                 return;
             }
             //判斷所有感應區物件名稱是否正確
             int passObjCount = 0;
             foreach (var onColliderObjName in m_MatchPosItemControl[i].OnCollisionObjName())
             {
-                for (int n = 0; n < m_CorrectObjCount; n++)
+                for (int n = 0; n < m_CorrectObjCount[i]; n++)
                 {
                     if (onColliderObjName.GetComponent<SpriteRenderer>().sprite.name == m_MatchPosItemControl[i].CorrectColliderObjName[n])
                     {
                         passObjCount++;
-                        break;                        
+                        break;
                     }
-                }               
+                }
             }
             //判斷物件名稱正確的數量是否等於正確物件的數量
-            if(passObjCount!= m_CorrectObjCount)
+            if (passObjCount != m_CorrectObjCount[i])
             {
                 //換失敗場景
                 GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Fail);
-                Debug.Log("物件名稱錯誤，相差:"+ (m_CorrectObjCount-passObjCount));
+                Debug.Log("物件名稱錯誤，相差:" + (m_CorrectObjCount[i] - passObjCount));
                 return;
             }
         }
@@ -221,14 +222,14 @@ public class MatchBManager : MonoBehaviour {
         {
             foreach (var onColliderObjName in m_MatchPosItemControl[i].OnCollisionObjName())
             {
-                for (int n = 0; n < m_CorrectObjCount; n++)
+                for (int n = 0; n < m_CorrectObjCount[i]; n++)
                 {
                     if (onColliderObjName.GetComponent<SpriteRenderer>().sprite.name == m_MatchPosItemControl[i].CorrectColliderObjName[n])
                     {
                         Debug.Log("正確");
 
                         //把拖曳物件當成母物件，且子物件只產生一個
-                        if(m_MatchPosItemControl[i].CorrectObj[n] != null && onColliderObjName.transform.childCount<1)
+                        if (m_MatchPosItemControl[i].CorrectObj[n] != null && onColliderObjName.transform.childCount < 1)
                         {
                             InstanceCorrectObj(m_MatchPosItemControl[i].CorrectObj[n], onColliderObjName.gameObject, m_MatchPosItemControl[i].CorrectObjPos[n]);
                         }
