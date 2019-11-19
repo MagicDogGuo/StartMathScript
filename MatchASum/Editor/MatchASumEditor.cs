@@ -114,7 +114,7 @@ public class MatchASumEditor : Editor {
         matchIdArrayFoldout = EditorGUILayout.Foldout(matchIdArrayFoldout, "感應區編號陣列");
         if (matchIdArrayFoldout)
         {
-            UEditorGUI.ArrayEditor(serializedObject.FindProperty("MatchIdArrays"), typeof(MatchIDArray_matchASum));
+            UEditorGUI.ArrayEditor(serializedObject.FindProperty("MatchIdArrays"), typeof(MatchIDArray_matchASum),null,null);
 
         }
 
