@@ -51,6 +51,15 @@ public class PermutationsSumEditor : Editor
         "是否啟用",
         "正確音效"
         );
+
+        UEditorGUI.ToogleGroup(
+        ref Instance.CouldHaveSameChildCount,
+        serializedObject.FindProperty("CouldHaveSameChildCount"),
+        "是否啟用",
+        "當物件組合存在相同個數時，答對?"
+        );
+
+
         GUILayout.EndVertical();
 
         GUILayout.Space(20f);

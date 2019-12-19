@@ -26,6 +26,7 @@ public class PermutationsSumManager : MonoBehaviour
     SceneSound_PermutationsSum m_SceneSound;
     OtherAnimObj_PermutationsSum m_otherAnimObj;
     RemoveItemObj m_removeItemObj;
+    bool m_couldHaveSameChildCount;
 
     GameObject m_OtherAnimObjs = null;
 
@@ -43,6 +44,7 @@ public class PermutationsSumManager : MonoBehaviour
         m_SceneSound = MatchCSourse.SceneSounds;
         m_otherAnimObj = MatchCSourse.OtherAnimObjs;
         m_removeItemObj = MatchCSourse.removeItemObj;
+        m_couldHaveSameChildCount = MatchCSourse.CouldHaveSameChildCount;
         //淡出相機
         m_CameraFade = this.gameObject.AddComponent<CameraFade>();
         //判斷播放背景音
@@ -241,39 +243,40 @@ public class PermutationsSumManager : MonoBehaviour
             }
             ////////////////
 
-
-            ////////////////字典是否有相同個數的子物件
-            m_MatchPosItemControl[i].OnCollisionObjName();
-            int num = m_MatchPosItemControl[i].OnCollidionrObjCount();
-
-            if (!allDic.ContainsKey(num))
+            if (!m_couldHaveSameChildCount)
             {
-              
-                int index = m_MatchPosItemControl[i].OnCollidionrObjCount();
-                Debug.Log("字典內無相同子物件個數物體，新增陣列 Index : "+ index );
-                allDic.Add(index, MathItemChildNames);
-                // MathItemChildCounts.Add(m_MatchPosItemControl[i].OnCollidionrObjCount());
-            }
-            else
-            {
-                foreach (var c in allDic)
+                ////////////////字典是否有相同個數的子物件
+                m_MatchPosItemControl[i].OnCollisionObjName();
+                int num = m_MatchPosItemControl[i].OnCollidionrObjCount();
+
+                if (!allDic.ContainsKey(num))
                 {
-                    if (c.Key == num)
+
+                    int index = m_MatchPosItemControl[i].OnCollidionrObjCount();
+                    Debug.Log("字典內無相同子物件個數物體，新增陣列 Index : " + index);
+                    allDic.Add(index, MathItemChildNames);
+                    // MathItemChildCounts.Add(m_MatchPosItemControl[i].OnCollidionrObjCount());
+                }
+                else
+                {
+                    foreach (var c in allDic)
                     {
-                        if (IsSameElement(allDic[num], MathItemChildNames))
+                        if (c.Key == num)
                         {
-                            Debug.Log("找到相同個數，且差集為0的陣列 : "+num);
-                            GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Fail);
-                            return;
+                            if (IsSameElement(allDic[num], MathItemChildNames))
+                            {
+                                Debug.Log("找到相同個數，且差集為0的陣列 : " + num);
+                                GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Fail);
+                                return;
+                            }
                         }
                     }
+                    Debug.Log("找到相同個數陣列，但差集!=0 : " + num);
+                    ///如果掃描一遍後發現都不是同樣陣列，就+進去
+                    int index = m_MatchPosItemControl[i].OnCollidionrObjCount();
+                    allDic.Add(index, MathItemChildNames);
                 }
-                Debug.Log("找到相同個數陣列，但差集!=0 : " + num);
-                ///如果掃描一遍後發現都不是同樣陣列，就+進去
-                int index = m_MatchPosItemControl[i].OnCollidionrObjCount();
-                allDic.Add(index, MathItemChildNames);
             }
-            
 
         }
 

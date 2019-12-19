@@ -121,6 +121,7 @@ public class MoveItemControl_PermutationsSum : MonoBehaviour {
         if (collision.tag == "matchPosItem")
         {
             m_ColliderObj = null;
+            tmp_matchItem = null;
         }
     }
     #endregion
