@@ -57,6 +57,14 @@ public class MatchAEditor : Editor {
            "正確音效"
        );
 
+        UEditorGUI.ToogleGroup(
+            ref Instance.SceneSounds.CorrectSoundWaitOverOnOff,
+            serializedObject.FindProperty("SceneSounds").FindPropertyRelative("CorrectSoundWaitOver"),
+            "是否啟用",
+            "正確音效等待音效結束才進下一關"
+        );
+
+
         GUILayout.EndHorizontal();
 
         GUILayout.Space(20f);
