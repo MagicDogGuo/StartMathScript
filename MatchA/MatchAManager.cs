@@ -58,6 +58,7 @@ public class MatchAManager : MonoBehaviour {
         GameEventSystem.Instance.OnPushCheckBtn += CheckPass;
     }
 
+
     /// <summary>
     /// 撥放音效
     /// </summary>
@@ -74,10 +75,10 @@ public class MatchAManager : MonoBehaviour {
         }
     }
 
+
+
     private IEnumerator IE_PlaySound(AudioClip audioclip, bool isPlay)
     {
-
-        GamePublicAudioControl.Instance.DownSceneMusic();
 
         audioSound = gameObject.AddComponent<AudioSource>();
         audioSound.clip = audioclip;
@@ -89,7 +90,6 @@ public class MatchAManager : MonoBehaviour {
         while (audioSound.isPlaying)
             yield return null;
 
-        GamePublicAudioControl.Instance.UpSceneMusic();
     }
 
     /// <summary>
@@ -157,6 +157,7 @@ public class MatchAManager : MonoBehaviour {
         }
     }
 
+
     /// <summary>
     /// 判斷有無過關
     /// </summary>
@@ -212,11 +213,9 @@ public class MatchAManager : MonoBehaviour {
                 }
             }
         }
-        //判斷播放正確音效
-        PlaySceneSound(m_SceneSound.CorrectSound, m_SceneSound.CorrectSoundOnOff);
-        //播放額外動畫
-        PlayOtherAnimObjAnim();
-        StartCoroutine(IE_ChangeToNextScene());
+
+        StartCoroutine(IE_PlayEndEvent(m_SceneSound.CorrectSoundWaitOver,m_SceneSound.CorrectSoundWaitOverOnOff));
+        
     }
     public void StopAllMatchAItem()
     {
@@ -246,5 +245,35 @@ public class MatchAManager : MonoBehaviour {
         GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Finished);
         yield return new WaitForSeconds(1);
         m_CameraFade.FadeIn(3);
+    }
+
+    IEnumerator IE_PlayEndEvent(AudioClip audioclip,bool isPlayWaitSound)
+    {
+        GamePublicAudioControl.Instance.DownSceneMusic();
+
+        //播放額外動畫
+        PlayOtherAnimObjAnim();
+
+        //判斷播放正確音效
+        PlaySceneSound(m_SceneSound.CorrectSound, m_SceneSound.CorrectSoundOnOff);
+
+        yield return new WaitForEndOfFrame();
+        if (isPlayWaitSound)
+        {
+            audioSound = gameObject.AddComponent<AudioSource>();
+            audioSound.clip = audioclip;
+            audioSound.volume = 0.7f;
+            audioSound.Stop();
+            audioSound.Play();
+
+            yield return null;
+            while (audioSound.isPlaying)
+                yield return null;
+        }
+
+        GamePublicAudioControl.Instance.UpSceneMusic();
+
+        //結尾換場
+        StartCoroutine(IE_ChangeToNextScene());
     }
 }

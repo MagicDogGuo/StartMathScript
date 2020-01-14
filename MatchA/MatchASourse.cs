@@ -21,6 +21,10 @@ public class SceneSound_matchA
     [Header("正確音效")]
     public bool CorrectSoundOnOff;
     public AudioClip CorrectSound;
+
+    [Header("正確時，會等待音效播完才進下一關的音效")]
+    public bool CorrectSoundWaitOverOnOff;
+    public AudioClip CorrectSoundWaitOver;
 }
 
 [System.Serializable]
