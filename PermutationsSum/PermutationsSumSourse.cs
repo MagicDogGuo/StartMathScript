@@ -10,6 +10,7 @@ public class PermutationsSumSourse : MonoBehaviour
     public OtherAnimObj_PermutationsSum OtherAnimObjs;
     public RemoveItemObj removeItemObj;
     public bool CouldHaveSameChildCount;
+    public bool DidnotHaveSameMatchItem;
 }
 
 [System.Serializable]

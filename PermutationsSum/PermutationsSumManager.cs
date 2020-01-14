@@ -27,6 +27,7 @@ public class PermutationsSumManager : MonoBehaviour
     OtherAnimObj_PermutationsSum m_otherAnimObj;
     RemoveItemObj m_removeItemObj;
     bool m_couldHaveSameChildCount;
+    bool m_didnotHaveSameMatchItem;
 
     GameObject m_OtherAnimObjs = null;
 
@@ -45,6 +46,7 @@ public class PermutationsSumManager : MonoBehaviour
         m_otherAnimObj = MatchCSourse.OtherAnimObjs;
         m_removeItemObj = MatchCSourse.removeItemObj;
         m_couldHaveSameChildCount = MatchCSourse.CouldHaveSameChildCount;
+        m_didnotHaveSameMatchItem = MatchCSourse.DidnotHaveSameMatchItem;
         //淡出相機
         m_CameraFade = this.gameObject.AddComponent<CameraFade>();
         //判斷播放背景音
@@ -184,7 +186,35 @@ public class PermutationsSumManager : MonoBehaviour
         }
     }
 
-    
+
+    public class MatchItemData 
+    {
+        private List<string> _data = new List<string>();
+
+        public MatchItemData(List<string> data)
+        {
+            _data = data;
+        }
+
+        public  bool Equals(MatchItemData obj)
+        {
+
+            for (int i = 0; i < _data.Count; i++)
+            {
+                if (!obj._data.Contains(_data[i]))
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+            
+        }
+        
+       
+
+    }
+
     /// <summary>
     /// 判斷有無過關
     /// </summary>
@@ -202,18 +232,23 @@ public class PermutationsSumManager : MonoBehaviour
             m_MatchPosItemControl.Add(matchPosItemObj.GetComponent<MatchPosItemControl_PermutationsSum>());
         }
 
-        
-        List<int> MatchItemPoint = new List<int>();
-
-
-
+    
 
         ///幹這沙小企劃文件啦 一直修改 直接變一個新的模組的企劃了耖  
         ///後續的人你慢慢改ㄅ 我自己都看不懂了 +U
        
         Dictionary<int, List<string>> allDic = new Dictionary<int, List<string>>();
+
+
+        List<MatchItemData> allMatchItem = new List<MatchItemData>();
+       
+       
+
+
+
         for (int i = 0; i < m_MatchPosItemControl.Count; i++)
         {
+            
             //判斷所有的感應區內是否都有物件
             if (m_MatchPosItemControl[i].OnCollidionrObjCount() == 0 )
             {
@@ -241,12 +276,30 @@ public class PermutationsSumManager : MonoBehaviour
                 string spriteName = childObjs[a].GetComponent<SpriteRenderer>().sprite.name;
                 MathItemChildNames.Add(spriteName);
             }
-            ////////////////
 
+            //////////////// 判斷是否與存在相同
+            if (m_didnotHaveSameMatchItem)
+            {
+                var _matchdata = new MatchItemData(MathItemChildNames);
+                if (allMatchItem.Exists(data => { return data.Equals(_matchdata); }))
+                {
+                    Debug.LogError("存在相同的配對");
+                    GameResultManager.Instance.TriggerGameResult(GameResultManager.GameResultType.Fail);
+                    return;
+                }
+                else
+                {
+                    allMatchItem.Add(new MatchItemData(MathItemChildNames));
+                }
+
+            }
+            
+
+            
             if (!m_couldHaveSameChildCount)
             {
                 ////////////////字典是否有相同個數的子物件
-                m_MatchPosItemControl[i].OnCollisionObjName();
+                Debug.Log(m_MatchPosItemControl[i].OnCollisionObjName());
                 int num = m_MatchPosItemControl[i].OnCollidionrObjCount();
 
                 if (!allDic.ContainsKey(num))
@@ -277,11 +330,12 @@ public class PermutationsSumManager : MonoBehaviour
                     allDic.Add(index, MathItemChildNames);
                 }
             }
-
+           
         }
 
+       
+       
 
-    
         //判斷播放正確音效
         PlaySceneSound(m_SceneSound.CorrectSound, m_SceneSound.CorrectSoundOnOff);
         //播放額外動畫

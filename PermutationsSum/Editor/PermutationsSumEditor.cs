@@ -59,6 +59,12 @@ public class PermutationsSumEditor : Editor
         "當物件組合存在相同個數時，答對?"
         );
 
+        UEditorGUI.ToogleGroup(
+        ref Instance.DidnotHaveSameMatchItem,
+        serializedObject.FindProperty("DidnotHaveSameMatchItem"),
+        "啟用",
+        "不要有相對的配對物件"
+        );
 
         GUILayout.EndVertical();
 
