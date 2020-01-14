@@ -174,7 +174,7 @@ public class GoCatPageManager : MonoBehaviour {
     public void OnHomeBtnClick()
     {
         Debug.Log("Home Button");
-        WebViewPlugins.HomeBtnClicked();
+        //WebViewPlugins.HomeBtnClicked();
     }
 
     public void OnReplayBtnClick()
